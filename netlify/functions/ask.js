@@ -25,7 +25,7 @@ export async function handler(event) {
       messages: [
         {
           role: "system",
-          content: `You are a helpful assistant that answers questions based only on the following company document:\n\n${companyText}\n\nIf the answer isn't found in this document, say "I'm not sure based on the provided information."`,
+          content: `You are a helpful assistant that answers questions based only on the following company document:\n\n${companyText}"`,
         },
         { role: "user", content: question },
       ],
