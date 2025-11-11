@@ -8,7 +8,7 @@ export async function handler(event) {
   const { question } = JSON.parse(event.body);
 
   // Path to your Word document
-  const docxPath = path.resolve("data/company_profile.docx");
+  const docxPath = path.resolve("data/NewLanternHelp.docx");
 
   // Convert .docx to plain text
   const buffer = fs.readFileSync(docxPath);
