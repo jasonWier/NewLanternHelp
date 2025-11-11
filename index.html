@@ -145,5 +145,88 @@
   <footer>
     <p>&copy; 2025 New Lantern. All rights reserved. | <a href="#top">Back to top</a></p>
   </footer>
+  <div id="chat-bubble">
+  <div id="chat-window" style="display:none;">
+    <div id="chat-log"></div>
+    <input id="chat-input" type="text" placeholder="Ask about New Lantern..." />
+    <button id="send-btn">Send</button>
+  </div>
+  <button id="toggle-btn">💬</button>
+</div>
+
+<script>
+  const chatWindow = document.getElementById("chat-window");
+  const toggleBtn = document.getElementById("toggle-btn");
+  const sendBtn = document.getElementById("send-btn");
+  const chatLog = document.getElementById("chat-log");
+  const chatInput = document.getElementById("chat-input");
+
+  toggleBtn.onclick = () => {
+    chatWindow.style.display = chatWindow.style.display === "none" ? "block" : "none";
+  };
+
+  sendBtn.onclick = async () => {
+    const question = chatInput.value.trim();
+    if (!question) return;
+
+    chatLog.innerHTML += `<div><strong>You:</strong> ${question}</div>`;
+    chatInput.value = "";
+
+    const res = await fetch("/.netlify/functions/ask", {
+      method: "POST",
+      body: JSON.stringify({ question }),
+    });
+    const data = await res.json();
+
+    chatLog.innerHTML += `<div><strong>AI:</strong> ${data.answer}</div>`;
+    chatLog.scrollTop = chatLog.scrollHeight;
+  };
+</script>
+
+<style>
+  #chat-bubble {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-family: sans-serif;
+  }
+  #toggle-btn {
+    background: #0d1b2a;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  #chat-window {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+    width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  #chat-log {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  #chat-input {
+    width: 70%;
+    padding: 6px;
+  }
+  #send-btn {
+    background: #ffcc00;
+    border: none;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+</style>
 </body>
 </html>
