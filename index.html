@@ -4,374 +4,264 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Lantern</title>
-  <style>
-    /* --- BASIC STYLES --- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
 
+  <style>
+    /* ----------- GLOBAL STYLES ----------- */
     body {
-      color: #333;
-      background-color: #f8f9fb;
-      line-height: 1.6;
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #222;
     }
 
     header {
       background: #0d1b2a;
       color: #fff;
-      padding: 1.5rem 0;
+      padding: 1.5rem 2rem;
       text-align: center;
     }
 
     header h1 {
+      margin: 0;
       font-size: 2rem;
-      letter-spacing: 1px;
     }
 
-    nav {
-      margin-top: 0.5rem;
-    }
-
-    nav a {
-      color: #ffcc00;
-      text-decoration: none;
-      margin: 0 1rem;
-      font-weight: bold;
-      transition: color 0.3s;
-    }
-
-    nav a:hover {
-      color: #ffffff;
-    }
-
-    /* --- HERO SECTION --- */
-    .hero {
-      background: linear-gradient(rgba(13, 27, 42, 0.7), rgba(13, 27, 42, 0.7)),
-                  url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1500&q=80") center/cover no-repeat;
-      color: #fff;
-      text-align: center;
-      padding: 5rem 1rem;
-    }
-
-    .hero h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    /* --- CONTENT SECTION --- */
-    .content {
-      max-width: 1000px;
-      margin: 3rem auto;
-      padding: 0 1.5rem;
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
       text-align: center;
     }
 
-    .content h3 {
+    main h2 {
       color: #0d1b2a;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
 
-    .content p {
-      margin-bottom: 1.5rem;
+    main p {
       font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
     }
 
-    /* --- FOOTER --- */
     footer {
       background: #0d1b2a;
       color: #fff;
       text-align: center;
-      padding: 1.5rem 0;
-      font-size: 0.9rem;
+      padding: 1rem;
+      position: relative;
+      bottom: 0;
+      width: 100%;
     }
 
-    footer a {
-      color: #ffcc00;
-      text-decoration: none;
+    /* ----------- CHAT WIDGET ----------- */
+    #chat-widget {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 1000;
+      font-family: "Segoe UI", sans-serif;
     }
 
-    footer a:hover {
-      text-decoration: underline;
+    #chat-toggle {
+      background: #0d1b2a;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
 
-    /* --- RESPONSIVE --- */
-    @media (max-width: 768px) {
-      .hero h2 {
-        font-size: 2rem;
+    #chat-box {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      width: 350px;
+      height: 450px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+    }
+
+    #chat-box.open {
+      display: flex;
+    }
+
+    #chat-header {
+      background: #0d1b2a;
+      color: white;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-header h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    #chat-header button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    #chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #f4f5f7;
+    }
+
+    .msg {
+      margin: 8px 0;
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 16px;
+      clear: both;
+      word-wrap: break-word;
+    }
+
+    .msg.user {
+      background: #0d1b2a;
+      color: #fff;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot {
+      background: #e9ecef;
+      color: #333;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg.error {
+      background: #ffc107;
+      color: #000;
+    }
+
+    #chat-input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #chat-input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    #chat-send {
+      background: #ffcc00;
+      border: none;
+      padding: 0 16px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      #chat-box {
+        width: 90%;
+        height: 70%;
+        right: 5%;
+        bottom: 80px;
       }
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1>New Lantern</h1>
-    <nav>
-      <a href="#about">About</a>
-      <a href="#services">Services</a>
-      <a href="#contact">Contact</a>
-    </nav>
+    <p>Guiding businesses toward brighter solutions.</p>
   </header>
 
-  <section class="hero">
-    <h2>Lighting the Way Forward</h2>
-    <p>At New Lantern, we bring innovation and clarity to every project — helping businesses illuminate new opportunities for growth and success.</p>
-  </section>
-
-  <section class="content" id="about">
-    <h3>About Us</h3>
-    <p>New Lantern is a forward-thinking company focused on delivering modern solutions that empower our clients to thrive in a fast-changing world. Our mission is to combine creativity, strategy, and technology to spark lasting impact.</p>
-  </section>
-
-  <section class="content" id="services">
-    <h3>Our Services</h3>
-    <p>We offer strategic consulting, digital transformation, and design services tailored to help organizations adapt and shine in the digital era.</p>
-  </section>
-
-  <section class="content" id="contact">
-    <h3>Contact Us</h3>
-    <p>We’d love to hear from you. Reach out at <a href="mailto:contact@newlantern.com">contact@newlantern.com</a> or follow us on social media for updates.</p>
-  </section>
+  <main>
+    <h2>Welcome to New Lantern</h2>
+    <p>
+      At New Lantern, we specialize in consulting, digital transformation, and
+      forward-thinking strategies to illuminate the path ahead for your
+      organization.
+    </p>
+    <p>
+      Use the chat assistant below to ask questions about our services,
+      company, or any uploaded documents.
+    </p>
+  </main>
 
   <footer>
-    <p>&copy; 2025 New Lantern. All rights reserved. | <a href="#top">Back to top</a></p>
+    <p>&copy; 2025 New Lantern. All rights reserved.</p>
   </footer>
-  <div id="chat-bubble">
-  <div id="chat-window" style="display:none;">
-    <div id="chat-log"></div>
-    <input id="chat-input" type="text" placeholder="Ask about New Lantern..." />
-    <button id="send-btn">Send</button>
-  </div>
-  <button id="toggle-btn">💬</button>
-</div>
 
-<script>
-  const chatWindow = document.getElementById("chat-window");
-  const toggleBtn = document.getElementById("toggle-btn");
-  const sendBtn = document.getElementById("send-btn");
-  const chatLog = document.getElementById("chat-log");
-  const chatInput = document.getElementById("chat-input");
+  <!-- CHAT BUBBLE -->
+  <div id="chat-widget">
+    <button id="chat-toggle">💬</button>
 
-  toggleBtn.onclick = () => {
-    chatWindow.style.display = chatWindow.style.display === "none" ? "block" : "none";
-  };
-
-  sendBtn.onclick = async () => {
-    const question = chatInput.value.trim();
-    if (!question) return;
-
-    chatLog.innerHTML += `<div><strong>You:</strong> ${question}</div>`;
-    chatInput.value = "";
-
-    const res = await fetch("/.netlify/functions/ask", {
-      method: "POST",
-      body: JSON.stringify({ question }),
-    });
-    const data = await res.json();
-
-    chatLog.innerHTML += `<div><strong>AI:</strong> ${data.answer}</div>`;
-    chatLog.scrollTop = chatLog.scrollHeight;
-  };
-</script>
-<!-- Chat Bubble -->
-<div id="chat-widget">
-  <button id="chat-toggle">💬</button>
-
-  <div id="chat-box">
-    <div id="chat-header">
-      <h4>New Lantern Assistant</h4>
-      <button id="chat-close">×</button>
-    </div>
-    <div id="chat-messages"></div>
-    <div id="chat-input-area">
-      <input id="chat-input" type="text" placeholder="Ask about New Lantern..." />
-      <button id="chat-send">➤</button>
+    <div id="chat-box">
+      <div id="chat-header">
+        <h4>New Lantern Assistant</h4>
+        <button id="chat-close">×</button>
+      </div>
+      <div id="chat-messages"></div>
+      <div id="chat-input-area">
+        <input id="chat-input" type="text" placeholder="Ask about New Lantern..." />
+        <button id="chat-send">➤</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Chat Script -->
-<script>
-  const toggleBtn = document.getElementById("chat-toggle");
-  const chatBox = document.getElementById("chat-box");
-  const closeBtn = document.getElementById("chat-close");
-  const sendBtn = document.getElementById("chat-send");
-  const input = document.getElementById("chat-input");
-  const messages = document.getElementById("chat-messages");
+  <!-- CHAT SCRIPT -->
+  <script>
+    const toggleBtn = document.getElementById("chat-toggle");
+    const chatBox = document.getElementById("chat-box");
+    const closeBtn = document.getElementById("chat-close");
+    const sendBtn = document.getElementById("chat-send");
+    const input = document.getElementById("chat-input");
+    const messages = document.getElementById("chat-messages");
 
-  toggleBtn.onclick = () => chatBox.classList.toggle("open");
-  closeBtn.onclick = () => chatBox.classList.remove("open");
+    toggleBtn.onclick = () => chatBox.classList.toggle("open");
+    closeBtn.onclick = () => chatBox.classList.remove("open");
 
-  async function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
 
-    // Display user message
-    messages.innerHTML += `<div class="msg user"><span>${text}</span></div>`;
-    input.value = "";
-    messages.scrollTop = messages.scrollHeight;
-
-    // Send to your backend AI function (replace URL if needed)
-    try {
-      const res = await fetch("/.netlify/functions/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: text }),
-      });
-      const data = await res.json();
-      const reply = data.answer || "Sorry, I couldn’t find that info.";
-
-      messages.innerHTML += `<div class="msg bot"><span>${reply}</span></div>`;
+      messages.innerHTML += `<div class="msg user"><span>${text}</span></div>`;
+      input.value = "";
       messages.scrollTop = messages.scrollHeight;
-    } catch (e) {
-      messages.innerHTML += `<div class="msg bot error"><span>⚠️ Error contacting AI.</span></div>`;
+
+      try {
+        const res = await fetch("/.netlify/functions/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: text }),
+        });
+
+        const data = await res.json();
+        const reply = data.answer || "Sorry, I couldn’t find that info.";
+        messages.innerHTML += `<div class="msg bot"><span>${reply}</span></div>`;
+        messages.scrollTop = messages.scrollHeight;
+      } catch (e) {
+        messages.innerHTML += `<div class="msg bot error"><span>⚠️ Error contacting AI.</span></div>`;
+      }
     }
-  }
 
-  sendBtn.onclick = sendMessage;
-  input.addEventListener("keypress", e => {
-    if (e.key === "Enter") sendMessage();
-  });
-</script>
-
-<!-- Chat Styles -->
-<style>
-  /* --- Floating Button --- */
-  #chat-widget {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 1000;
-    font-family: "Segoe UI", sans-serif;
-  }
-
-  #chat-toggle {
-    background: #0d1b2a;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  }
-
-  /* --- Chat Window --- */
-  #chat-box {
-    display: none;
-    flex-direction: column;
-    position: fixed;
-    bottom: 100px;
-    right: 25px;
-    width: 350px;
-    height: 450px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-  }
-
-  #chat-box.open {
-    display: flex;
-  }
-
-  #chat-header {
-    background: #0d1b2a;
-    color: white;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  #chat-header h4 {
-    margin: 0;
-    font-size: 16px;
-  }
-
-  #chat-header button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-  }
-
-  #chat-messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    background: #f4f5f7;
-  }
-
-  .msg {
-    margin: 8px 0;
-    max-width: 80%;
-    padding: 8px 12px;
-    border-radius: 16px;
-    clear: both;
-  }
-
-  .msg.user {
-    background: #0d1b2a;
-    color: #fff;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
-  }
-
-  .msg.bot {
-    background: #e9ecef;
-    color: #333;
-    margin-right: auto;
-    border-bottom-left-radius: 4px;
-  }
-
-  .msg.error {
-    background: #ffc107;
-    color: #000;
-  }
-
-  #chat-input-area {
-    display: flex;
-    border-top: 1px solid #ddd;
-  }
-
-  #chat-input {
-    flex: 1;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    outline: none;
-  }
-
-  #chat-send {
-    background: #ffcc00;
-    border: none;
-    padding: 0 16px;
-    font-size: 18px;
-    cursor: pointer;
-  }
-
-  /* Mobile */
-  @media (max-width: 600px) {
-    #chat-box {
-      width: 90%;
-      height: 70%;
-      right: 5%;
-      bottom: 80px;
-    }
-  }
-</style>
-
+    sendBtn.onclick = sendMessage;
+    input.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
 </body>
 </html>
