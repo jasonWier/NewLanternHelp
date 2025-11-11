@@ -1,41 +1,40 @@
-/// netlify/functions/ask.js
-import fetch from "node-fetch";
-import fs from "fs";
-import path from "path";
+// netlify/functions/ask.js
+import { Buffer } from "buffer";
 import mammoth from "mammoth";
 
-export async function handler(event) {
-  const { question } = JSON.parse(event.body);
+export const handler = async (event) => {
+  try {
+    // Only allow POST requests
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
 
-  // Path to your Word document
-  const docxPath = path.resolve("data/NewLanternHelp.docx");
+    const { fileBase64, question } = JSON.parse(event.body || "{}");
 
-  // Convert .docx to plain text
-  const buffer = fs.readFileSync(docxPath);
-  const { value: companyText } = await mammoth.extractRawText({ buffer });
+    if (!fileBase64) {
+      return { statusCode: 400, body: JSON.stringify({ error: "No file provided" }) };
+    }
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: `You are a helpful assistant that answers questions based only on the following company document:\n\n${companyText}"`,
-        },
-        { role: "user", content: question },
-      ],
-    }),
-  });
+    // Convert Base64 to ArrayBuffer
+    const arrayBuffer = Uint8Array.from(Buffer.from(fileBase64, "base64"));
 
-  const data = await response.json();
+    // Extract text from the .docx using Mammoth
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    const text = result.value;
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ answer: data.choices[0].message.content }),
-  };
-}
+    // Simple AI simulation (replace with real AI call)
+    // For example, you could integrate OpenAI API here
+    const answer = `You asked: "${question}"\n\nBased on the document content:\n${text.substring(0, 500)}...`;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ answer }),
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
+    };
+  }
+};
