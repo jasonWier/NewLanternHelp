@@ -1,209 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Lantern Assistant</title>
-
-  <style>
-    /* ---------- GLOBAL ---------- */
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background-color: #f7f8fa;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      color: #222;
-    }
-
-    header {
-      background: #0d1b2a;
-      color: #fff;
-      text-align: center;
-      padding: 1.2rem 0;
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    #chat-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background: #f4f5f7;
-      scroll-behavior: smooth;
-    }
-
-    .msg {
-      max-width: 80%;
-      margin: 10px 0;
-      padding: 12px 16px;
-      border-radius: 18px;
-      line-height: 1.5;
-      word-wrap: break-word;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .msg.user {
-      background: #0d1b2a;
-      color: #fff;
-      margin-left: auto;
-      border-bottom-right-radius: 4px;
-    }
-
-    .msg.bot {
-      background: #e9ecef;
-      color: #333;
-      margin-right: auto;
-      border-bottom-left-radius: 4px;
-    }
-
-    .msg.error {
-      background: #ffc107;
-      color: #000;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ---------- INPUT AREA ---------- */
-    #chat-input-area {
-      display: flex;
-      align-items: center;
-      padding: 12px;
-      border-top: 1px solid #ddd;
-      background: #fff;
-    }
-
-    #chat-input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 25px;
-      padding: 12px 18px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    #chat-input:focus {
-      border-color: #0d1b2a;
-    }
-
-    #chat-send {
-      background: #0d1b2a;
-      color: #fff;
-      border: none;
-      border-radius: 25px;
-      margin-left: 10px;
-      padding: 12px 22px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    #chat-send:hover {
-      background: #142d4c;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #777;
-      margin-top: 8px;
-    }
-
-    /* ---------- MOBILE ---------- */
-    @media (max-width: 600px) {
-      main {
-        border-radius: 0;
-        box-shadow: none;
-      }
-      .msg {
-        max-width: 90%;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <header>💡 New Lantern Assistant</header>
+  <div class="banner">
+    <img src="banner.png" alt="New Lantern Logo">
+    <h1>New Lantern Assistant</h1>
+  </div>
 
-  <main>
-    <div id="chat-messages">
-      <div class="msg bot">
-        Hello! I'm the New Lantern Assistant.  
-        Ask me anything about our services, documents, or your uploaded .docx files.
-      </div>
-    </div>
+  <!-- Floating chat bubble -->
+  <div id="chat-bubble">
+    <div id="chat-header">New Lantern Assistant</div>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Ask a question...">
+    <button id="send-btn">Send</button>
+  </div>
 
-    <div id="chat-input-area">
-      <input id="chat-input" type="text" placeholder="Type your question here..." />
-      <button id="chat-send">Send</button>
-    </div>
-  </main>
-
-  <footer>&copy; 2025 New Lantern. All rights reserved.</footer>
-
-  <script>
-    const input = document.getElementById("chat-input");
-    const sendBtn = document.getElementById("chat-send");
-    const messages = document.getElementById("chat-messages");
-
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      // Add user message
-      messages.innerHTML += `<div class="msg user"><span>${text}</span></div>`;
-      input.value = "";
-      messages.scrollTop = messages.scrollHeight;
-
-      // Optional typing indicator
-      const typing = document.createElement("div");
-      typing.className = "msg bot";
-      typing.textContent = "⋯";
-      messages.appendChild(typing);
-      messages.scrollTop = messages.scrollHeight;
-
-      try {
-        const res = await fetch("/.netlify/functions/ask", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: text }),
-        });
-        const data = await res.json();
-
-        typing.remove();
-        const reply = data.answer || "Sorry, I couldn’t find that info.";
-        messages.innerHTML += `<div class="msg bot"><span>${reply}</span></div>`;
-        messages.scrollTop = messages.scrollHeight;
-      } catch (e) {
-        typing.remove();
-        messages.innerHTML += `<div class="msg bot error"><span>⚠️ Error contacting AI.</span></div>`;
-      }
-    }
-
-    sendBtn.onclick = sendMessage;
-    input.addEventListener("keypress", e => {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

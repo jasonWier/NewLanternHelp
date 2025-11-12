@@ -1,40 +1,35 @@
-// netlify/functions/ask.js
-import { Buffer } from "buffer";
+import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 import mammoth from "mammoth";
 
-export const handler = async (event) => {
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+export async function handler(event) {
   try {
-    // Only allow POST requests
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
+    const { question } = JSON.parse(event.body || "{}");
 
-    const { fileBase64, question } = JSON.parse(event.body || "{}");
+    // Load the backend Word document
+    const docPath = path.resolve("./netlify/functions/reference.docx");
+    const buffer = fs.readFileSync(docPath);
+    const result = await mammoth.extractRawText({ buffer });
+    const fileText = result.value;
 
-    if (!fileBase64) {
-      return { statusCode: 400, body: JSON.stringify({ error: "No file provided" }) };
-    }
+    const prompt = `Answer the question based on this document:\n${fileText}\nQuestion: ${question}`;
 
-    // Convert Base64 to ArrayBuffer
-    const arrayBuffer = Uint8Array.from(Buffer.from(fileBase64, "base64"));
-
-    // Extract text from the .docx using Mammoth
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    const text = result.value;
-
-    // Simple AI simulation (replace with real AI call)
-    // For example, you could integrate OpenAI API here
-    const answer = `You asked: "${question}"\n\nBased on the document content:\n${text.substring(0, 500)}...`;
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }]
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ answer }),
+      body: JSON.stringify({ answer: completion.choices[0].message.content })
     };
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error", details: error.message }),
-    };
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
-};
+}
