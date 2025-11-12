@@ -4,14 +4,115 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Lantern Assistant</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* --- BASIC STYLES --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      color: #333;
+      background-color: #f8f9fb;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #0d1b2a;
+      color: #fff;
+      padding: 1.5rem 0;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 1px;
+    }
+
+    nav {
+      margin-top: 0.5rem;
+    }
+
+    nav a {
+      color: #ffcc00;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffffff;
+    }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      background: linear-gradient(rgba(13, 27, 42, 0.7), rgba(13, 27, 42, 0.7)),
+                  url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1500&q=80") center/cover no-repeat;
+      color: #fff;
+      text-align: center;
+      padding: 5rem 1rem;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* --- CONTENT SECTION --- */
+    .content {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+      text-align: center;
+    }
+
+    .content h3 {
+      color: #0d1b2a;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .content p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    /* --- FOOTER --- */
+    footer {
+      background: #0d1b2a;
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #ffcc00;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="banner">
-    <img src="banner.png" alt="New Lantern Logo">
-    <h1>New Lantern Assistant</h1>
-  </div>
-
   <!-- Floating chat bubble -->
   <div id="chat-bubble">
     <div id="chat-header">New Lantern Assistant</div>
