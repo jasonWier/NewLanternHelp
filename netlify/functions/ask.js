@@ -12,7 +12,7 @@ export async function handler(event) {
     const { question } = JSON.parse(event.body || "{}");
 
     // Load the backend Word document
-    const docPath = path.resolve("./netlify/functions/reference.docx");
+    const docPath = path.resolve("./netlify/functions/NewLanternHelp.docx");
     const buffer = fs.readFileSync(docPath);
     const result = await mammoth.extractRawText({ buffer });
     const fileText = result.value;
